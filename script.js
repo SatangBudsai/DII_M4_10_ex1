@@ -120,10 +120,10 @@ function addStudentToTable2(index,student){
     })
     
     cell.appendChild(button)
-    
-    row.addEventListener('click' , function(){
-        showStudentBlock(student);
-    })
+
+    // row.addEventListener('click' , function(){
+    //     showStudentBlock(student);
+    // })
     row.appendChild(cell)
     tableBody2.appendChild(row)
 }
@@ -174,7 +174,7 @@ function addStudentData(student){
     gpaElem.innerHTML = student.gpa
     let profileElem = document.getElementById('image')
     profileElem.setAttribute('src', student.image)
-    
+    profileElem.style.width='50em'
 }
 
 function onload(){
@@ -213,7 +213,7 @@ function addStudentToDB (student){
 
     }).then(data=>{
         console.log('success',data)
-        showAllStudent()
+        showStudentBlock(data);
     })
 }
 
@@ -242,7 +242,6 @@ function onAddStudentClick(){
     student.gpa = document.getElementById('gpaInput').value
     student.image = document.getElementById('imageLinkInput').value
     addStudentToDB(student);
-
 }
 
 document.getElementById('addButton').addEventListener('click',onAddStudentClick);
@@ -270,10 +269,6 @@ document.getElementById('allStudentMenu').addEventListener('click',(event)=>{
     showAllStudentBlock()
 })
 
-document.getElementById('searchMenu').addEventListener('click',(event)=>{
-    hideAll();
-    singleStudentResult.style.display='block'
-})
 document.getElementById('addStudentMenu').addEventListener('click',(event)=>{
     hideAll();
     addUserDetail.style.display='block'
