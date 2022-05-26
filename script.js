@@ -1,56 +1,3 @@
-// var student = {};
-// student.name = 'คุณลุง';
-// student.username = 'a@b.com';
-// student.gender = 'ชาย';
-// // console.log(student.name)
-// // document.getElementById('output').innerText = student;
-
-// var secondStudent = {};
-// secondStudent.name = 'คุณนาย';
-// secondStudent.username = 'c@f.com';
-// secondStudent.gender = 'หญิง';
-
-// var students = [
-//     student,secondStudent,{
-//         name :'สมรักษ์',
-//         username : 'm@n.com',
-//         gender : 'ชาย',
-//     }
-// ]
-
-// function addStudent(student){
-//     const output = document.getElementById('output');
-//     addStudentData(output,'ชื่อ',student.name);
-//     addStudentData(output,'รหัส',student.username);
-//     addStudentData(output,'เพศ',student.gender);
-
-//     addStudentData(output,'ชื่อ',secondStudent.name);
-//     addStudentData(output,'รหัส',secondStudent.username);
-//     addStudentData(output,'เพศ',secondStudent.gender);
-    
-//     addStudentData(output,'ชื่อ',students[2].name);
-//     addStudentData(output,'รหัส',students[2].username);
-//     addStudentData(output,'เพศ',students[2].gender);
-// }
-// function addStudentData(type,key,data){
-//     let row = document.createElement('div');
-//     row.classList.add('row');
-//     let columnName = document.createElement('div')
-//     columnName.classList.add('col-1')
-//     columnName.classList.add('offset-1')
-//     columnName.innerHTML=key
-//     let columnValue = document.createElement('div')
-//     columnValue.classList.add('col')
-//     columnValue.innerHTML = data
-//     row.appendChild(columnName)
-//     row.appendChild(columnValue)
-//     type.appendChild(row)
-// }
-
-// window.addEventListener('load',function(){
-//     addStudent(student)
-// })
-
 function addStudentToTable(index,student){
     const tableBody = document.getElementById('tableBody')
     let row = document.createElement('tr')
@@ -83,7 +30,7 @@ function addStudentList(StudentList){
 //     addStudentList(students)
 // })
 
-
+var getId
 function addStudentToTable2(index,student){
     const tableBody2 = document.getElementById('tableBody2')
     let row = document.createElement('tr')
@@ -118,7 +65,27 @@ function addStudentToTable2(index,student){
             deleteStudent(student.id)
         }
     })
-    
+    cell.appendChild(button)
+    row.appendChild(cell)
+    //edit
+    cell = document.createElement('td')
+    button = document.createElement('button')
+    button.classList.add('btn')
+    button.classList.add('btn-outline-danger')
+    button.setAttribute('type', 'button')
+    button.innerText = 'edit'
+    hideButton('submit')
+    changeButton.style.display='block'
+
+    button.addEventListener('click', function(){
+            addUserDetail.style.display = 'block'
+            document.getElementById('nameInput').value = student.name
+            document.getElementById('surnameInput').value = student.surname
+            document.getElementById('studentIdInput').value = student.studentId
+            document.getElementById('gpaInput').value = student.gpa
+            document.getElementById('imageLinkInput').value = student.image
+            getId = student.id
+    })
     cell.appendChild(button)
 
     // row.addEventListener('click' , function(){
@@ -127,6 +94,11 @@ function addStudentToTable2(index,student){
     row.appendChild(cell)
     tableBody2.appendChild(row)
 }
+
+
+document.getElementById('changeButton').addEventListener('click',function(){
+    onEditStudentClick()
+})
 
 function addStudentList2(StudentList){
     const tableBody = document.getElementById('tableBody2')
@@ -218,6 +190,28 @@ function addStudentToDB (student){
     })
 }
 
+function changeStudentToDB (student){
+    fetch('https://dv-student-backend-2019.appspot.com/students',{
+        method: 'PUT',
+        headers:{
+            'Content-Type':'application/json'
+        },
+        body:JSON.stringify(student)
+    }).then(response => {
+        if(response.status === 200){
+            return response.json()
+        }else{
+            throw Error(response.statusText)
+        }
+
+    }).then(data=>{
+        console.log('success',data)
+        hideAll();
+        showStudentBlock(data);
+        showAllStudentBlock(data)
+    })
+}
+
 function deleteStudent(id){
     fetch(`https://dv-student-backend-2019.appspot.com/student/${id}`,{
         method : 'DELETE'
@@ -245,6 +239,17 @@ function onAddStudentClick(){
     addStudentToDB(student);
 }
 
+function onEditStudentClick(){
+    let student = {}
+    student.id = getId
+    student.name = document.getElementById('nameInput').value
+    student.surname = document.getElementById('surnameInput').value
+    student.studentId = document.getElementById('studentIdInput').value
+    student.gpa = document.getElementById('gpaInput').value
+    student.image = document.getElementById('imageLinkInput').value
+    changeStudentToDB(student);
+}
+
 document.getElementById('addButton').addEventListener('click',onAddStudentClick);
 
 function showAllStudent(){
@@ -265,14 +270,32 @@ function hideAll(){
     listStudentResult.style.display='none'
     addUserDetail.style.display='none'
 }
+var addButton = document.getElementById('addButton')
+var changeButton = document.getElementById('changeButton')
+
+function hideButton(name){
+    if(name == "submit"){
+        addButton.style.display='none'
+    }else if(name == "change"){
+        changeButton.style.display='none'
+    }else{
+        
+    }
+}
 
 document.getElementById('allStudentMenu').addEventListener('click',(event)=>{
     showAllStudentBlock()
 })
-
 document.getElementById('addStudentMenu').addEventListener('click',(event)=>{
     hideAll();
+    hideButton('change')
+    document.getElementById('nameInput').value = ''
+    document.getElementById('surnameInput').value = ''
+    document.getElementById('studentIdInput').value = ''
+    document.getElementById('gpaInput').value = ''
+    document.getElementById('imageLinkInput').value = ''
     addUserDetail.style.display='block'
+    addButton.style.display='block'
 })
 
 function showAllStudentBlock(){
