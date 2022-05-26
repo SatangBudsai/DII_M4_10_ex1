@@ -159,7 +159,8 @@ document.getElementById('searchButton').addEventListener('click',()=>{
     .then(response => {
         return response.json()
     }).then(student => {
-        addStudentData(student)
+        hideAll()
+        showStudentBlock(student)
     })
 })
 
@@ -174,7 +175,7 @@ function addStudentData(student){
     gpaElem.innerHTML = student.gpa
     let profileElem = document.getElementById('image')
     profileElem.setAttribute('src', student.image)
-    profileElem.style.width='50em'
+    profileElem.style.width='20em'
 }
 
 function onload(){
